@@ -93,7 +93,23 @@
             </button>
 
         </div>
+<details
+    class="library-shell"
+    open
+>
 
+    <summary>
+        Case Library
+        <span id="libraryCount"></span>
+    </summary>
+
+    <div
+        id="caseLibrary"
+        class="case-library"
+    >
+    </div>
+
+</details>
     </section>
 
 
@@ -473,41 +489,63 @@
 
         <div class="finalize-section">
 
-            <div class="small-label">
-                FINALIZE
-            </div>
+    <div class="small-label">
+        CASE LIBRARY
+    </div>
 
-            <div class="section-title compact-title">
-                Export
-            </div>
-
-            <button
-                id="exportCsvButton"
-                class="primary-button export-button"
-                type="button"
-            >
-                EXPORT CSV
-            </button>
-
-            <div class="export-note">
-                Removed events remain in the exported audit record.
-            </div>
-
-        </div>
+    <div class="section-title compact-title">
+        Archive
+    </div>
 
 
-        <button
-            id="newCaseButton"
-            class="secondary-button new-case-button"
-            type="button"
-        >
-            New Case
-        </button>
+    <button
+        id="saveLibraryButton"
+        class="primary-button export-button"
+        type="button"
+    >
+        SAVE TO CASE LIBRARY
+    </button>
+
+
+    <div
+        id="librarySaveStatus"
+        class="export-note"
+    >
+        Not saved to Case Library.
+    </div>
+
+
+    <div class="finalize-divider"></div>
+
+
+    <div class="small-label">
+        EXPORT
+    </div>
+
+    <button
+        id="exportCsvButton"
+        class="secondary-button export-button"
+        type="button"
+    >
+        Export CSV
+    </button>
+
+</div>
+
+
+<button
+    id="newCaseButton"
+    class="secondary-button new-case-button"
+    type="button"
+>
+    Discard Case
+</button>
 
     </section>
 
 </main>
 
+<script src="storage.js"></script>
 <script src="app.js"></script>
 
 <script>

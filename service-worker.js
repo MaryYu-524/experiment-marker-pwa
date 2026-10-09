@@ -2,13 +2,14 @@
 
 
 const CACHE_NAME =
-    "experiment-marker-v04b";
+    "experiment-marker-v05b";
 
 
 const APP_SHELL = [
     "./",
     "./index.html",
     "./style.css",
+    "./storage.js",
     "./app.js",
     "./manifest.json",
 ];

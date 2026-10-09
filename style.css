@@ -557,27 +557,62 @@ input:focus {
    CALIBRATION
    ========================================================= */
 
+.utility-content {
+    padding:
+        16px
+        14px
+        16px;
+
+    border-top:
+        1px solid
+        var(--border);
+}
+
+
 .calibration-grid {
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
         1fr;
 
     gap:
+        16px;
+}
+
+
+.calibration-grid > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap:
+        8px;
+}
+
+
+.calibration-grid label {
+    margin:
         0;
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        650;
+
+    line-height:
+        1.25;
 }
 
 
 .calibration-actions {
-    display:
-        flex;
+    display: flex;
 
     gap:
         8px;
 
     margin-top:
-        14px;
+        16px;
 }
 
 
@@ -590,10 +625,11 @@ input:focus {
 
 .calibration-status {
     margin-top:
-        12px;
+        14px;
 
     padding:
-        11px 12px;
+        11px
+        12px;
 
     border-radius:
         10px;
@@ -610,7 +646,6 @@ input:focus {
     line-height:
         1.45;
 }
-
 
 /* =========================================================
    RUNNING CORRECTIONS
@@ -952,4 +987,146 @@ input:focus {
             left;
     }
 
+}
+
+/* =========================================================
+   CASE LIBRARY
+   ========================================================= */
+
+.library-shell {
+    margin-top: 18px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        var(--radius);
+
+    overflow:
+        hidden;
+}
+
+
+.library-shell summary {
+    min-height:
+        50px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+    padding:
+        0 16px;
+
+    font-weight:
+        680;
+
+    cursor:
+        pointer;
+}
+
+
+.case-library {
+    padding:
+        0
+        14px
+        14px;
+
+    border-top:
+        1px solid
+        var(--border);
+}
+
+
+.library-empty {
+    padding:
+        16px 0
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.82rem;
+}
+
+
+.library-item {
+    padding:
+        14px 0;
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.library-item:last-child {
+    border-bottom:
+        none;
+}
+
+
+.library-top-row {
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-start;
+
+    gap:
+        14px;
+}
+
+
+.library-case-id {
+    font-weight:
+        720;
+}
+
+
+.library-meta {
+    margin-top:
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.75rem;
+
+    line-height:
+        1.45;
+}
+
+
+.library-actions {
+    display:
+        flex;
+
+    gap:
+        7px;
+
+    margin-top:
+        11px;
+}
+
+
+.finalize-divider {
+    margin:
+        22px
+        0;
+
+    border-top:
+        1px solid
+        var(--border);
 }
