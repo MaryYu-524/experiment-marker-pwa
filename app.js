@@ -1,13 +1,16 @@
 "use strict";
 
+
 /* =========================================================
 
    CONFIG
 
    ========================================================= */
 
+
 const STATE_VERSION =
     4;
+
 
 const DEFAULT_EVENTS = [
 
@@ -36,6 +39,7 @@ const DEFAULT_EVENTS = [
     "empty_event",
 
 ];
+
 
 const CSV_COLUMNS = [
 
@@ -83,13 +87,16 @@ const CSV_COLUMNS = [
 
 ];
 
+
 /* =========================================================
 
    STATE
 
    ========================================================= */
 
+
 function createInitialState() {
+
 
     return {
 
@@ -97,9 +104,11 @@ function createInitialState() {
 
             STATE_VERSION,
 
+
         state:
 
             "READY",
+
 
         case_id:
 
@@ -109,13 +118,16 @@ function createInitialState() {
 
             null,
 
+
         library_saved_at_epoch_ms:
 
             null,
 
+
         experiment_type:
 
             "",
+
 
         /*
 
@@ -129,41 +141,51 @@ function createInitialState() {
 
             "",
 
+
         event_types:
 
             [...DEFAULT_EVENTS],
+
 
         experiment_start_datetime:
 
             null,
 
+
         experiment_end_datetime:
 
             null,
+
 
         elapsed_checkpoint_ms:
 
             0,
 
+
         saved_at_epoch_ms:
 
             null,
+
 
         clock_offset_seconds:
 
             null,
 
+
         calibration_reference_time:
 
             null,
+
 
         calibration_eeg_time:
 
             null,
 
+
         events:
 
             [],
+
 
         removed_stack:
 
@@ -173,11 +195,13 @@ function createInitialState() {
 
 }
 
+
 function normalizeEvent(
 
     event
 
 ) {
+
 
     return {
 
@@ -193,6 +217,7 @@ function normalizeEvent(
 
             "",
 
+
         event:
 
             event.event
@@ -205,6 +230,7 @@ function normalizeEvent(
 
             "",
 
+
         reference_datetime:
 
             event.reference_datetime
@@ -212,6 +238,7 @@ function normalizeEvent(
             ??
 
             null,
+
 
         elapsed_seconds:
 
@@ -225,6 +252,7 @@ function normalizeEvent(
 
             ),
 
+
         note:
 
             event.note
@@ -232,6 +260,7 @@ function normalizeEvent(
             ??
 
             "",
+
 
         status:
 
@@ -245,6 +274,7 @@ function normalizeEvent(
 
                 : "active",
 
+
         renamed_at:
 
             event.renamed_at
@@ -252,6 +282,7 @@ function normalizeEvent(
             ??
 
             null,
+
 
         removed_at:
 
@@ -261,6 +292,7 @@ function normalizeEvent(
 
             null,
 
+
         restored_at:
 
             event.restored_at
@@ -268,6 +300,7 @@ function normalizeEvent(
             ??
 
             null,
+
 
         correction_count:
 
@@ -285,15 +318,18 @@ function normalizeEvent(
 
 }
 
+
 let caseState =
 
     createInitialState();
+
 
 let runtime = {
 
     elapsedBaseMs:
 
         0,
+
 
     perfAnchor:
 
@@ -307,9 +343,11 @@ function normalizeLoadedState(
 
 ) {
 
+
     const initial =
 
         createInitialState();
+
 
     const merged = {
 
@@ -319,9 +357,11 @@ function normalizeLoadedState(
 
     };
 
+
     merged.version =
 
         STATE_VERSION;
+
 
     if (
 
@@ -341,11 +381,13 @@ function normalizeLoadedState(
 
     ) {
 
+
         merged.event_types =
 
             [...DEFAULT_EVENTS];
 
     }
+
 
     merged.events =
 
@@ -366,6 +408,7 @@ function normalizeLoadedState(
             :
 
             [];
+
 
     if (
 
@@ -393,11 +436,14 @@ function normalizeLoadedState(
 
     ) {
 
+
         merged.clock_offset_seconds =
 
             null;
 
+
     } else {
+
 
         const parsedOffset =
 
@@ -406,6 +452,7 @@ function normalizeLoadedState(
                 merged.clock_offset_seconds
 
             );
+
 
         merged.clock_offset_seconds =
 
@@ -425,6 +472,7 @@ function normalizeLoadedState(
 
     }
 
+
     if (
 
         Array.isArray(
@@ -434,6 +482,7 @@ function normalizeLoadedState(
         )
 
     ) {
+
 
         merged.removed_stack =
 
@@ -469,7 +518,9 @@ function normalizeLoadedState(
 
             );
 
+
     } else {
+
 
         merged.removed_stack =
 
@@ -515,6 +566,7 @@ function normalizeLoadedState(
 
     }
 
+
     if (
 
         ![
@@ -533,21 +585,25 @@ function normalizeLoadedState(
 
     ) {
 
+
         merged.state =
 
             "READY";
 
     }
 
+
     return merged;
 
 }
+
 
 /* =========================================================
 
    DOM
 
    ========================================================= */
+
 
 const readyView =
 
@@ -557,6 +613,7 @@ const readyView =
 
     );
 
+
 const runningView =
 
     document.querySelector(
@@ -564,6 +621,7 @@ const runningView =
         "#runningView"
 
     );
+
 
 const completeView =
 
@@ -573,6 +631,7 @@ const completeView =
 
     );
 
+
 const statusBadge =
 
     document.querySelector(
@@ -580,6 +639,7 @@ const statusBadge =
         "#statusBadge"
 
     );
+
 
 const caseIdInput =
 
@@ -589,6 +649,7 @@ const caseIdInput =
 
     );
 
+
 const experimentTypeInput =
 
     document.querySelector(
@@ -596,6 +657,7 @@ const experimentTypeInput =
         "#experimentTypeInput"
 
     );
+
 
 const startButton =
 
@@ -605,6 +667,7 @@ const startButton =
 
     );
 
+
 const endButton =
 
     document.querySelector(
@@ -612,6 +675,7 @@ const endButton =
         "#endButton"
 
     );
+
 
 const newCaseButton =
 
@@ -658,6 +722,8 @@ if (
     );
 }
 
+
+
 const exportCsvButton =
 
     document.querySelector(
@@ -665,6 +731,7 @@ const exportCsvButton =
         "#exportCsvButton"
 
     );
+
 
 const runningCaseId =
 
@@ -674,6 +741,7 @@ const runningCaseId =
 
     );
 
+
 const eventCount =
 
     document.querySelector(
@@ -681,6 +749,7 @@ const eventCount =
         "#eventCount"
 
     );
+
 
 const eventNoteInput =
 
@@ -690,6 +759,7 @@ const eventNoteInput =
 
     );
 
+
 const eventGrid =
 
     document.querySelector(
@@ -697,6 +767,7 @@ const eventGrid =
         "#eventGrid"
 
     );
+
 
 const lastRecorded =
 
@@ -706,6 +777,7 @@ const lastRecorded =
 
     );
 
+
 const lastEventName =
 
     document.querySelector(
@@ -713,6 +785,7 @@ const lastEventName =
         "#lastEventName"
 
     );
+
 
 const lastEventElapsed =
 
@@ -722,6 +795,7 @@ const lastEventElapsed =
 
     );
 
+
 const timeline =
 
     document.querySelector(
@@ -729,6 +803,7 @@ const timeline =
         "#timeline"
 
     );
+
 
 const undoButton =
 
@@ -738,6 +813,7 @@ const undoButton =
 
     );
 
+
 const restoreButton =
 
     document.querySelector(
@@ -745,6 +821,7 @@ const restoreButton =
         "#restoreButton"
 
     );
+
 
 const runningReferenceTime =
 
@@ -754,6 +831,7 @@ const runningReferenceTime =
 
     );
 
+
 const runningEegTime =
 
     document.querySelector(
@@ -761,6 +839,7 @@ const runningEegTime =
         "#runningEegTime"
 
     );
+
 
 const runningApplyCalibration =
 
@@ -770,6 +849,7 @@ const runningApplyCalibration =
 
     );
 
+
 const runningClearCalibration =
 
     document.querySelector(
@@ -777,6 +857,7 @@ const runningClearCalibration =
         "#runningClearCalibration"
 
     );
+
 
 const runningCalibrationStatus =
 
@@ -786,6 +867,7 @@ const runningCalibrationStatus =
 
     );
 
+
 const completeCaseId =
 
     document.querySelector(
@@ -793,6 +875,7 @@ const completeCaseId =
         "#completeCaseId"
 
     );
+
 
 const completeSummary =
 
@@ -802,6 +885,7 @@ const completeSummary =
 
     );
 
+
 const completeTimeline =
 
     document.querySelector(
@@ -809,6 +893,7 @@ const completeTimeline =
         "#completeTimeline"
 
     );
+
 
 const completeReferenceTime =
 
@@ -818,6 +903,7 @@ const completeReferenceTime =
 
     );
 
+
 const completeEegTime =
 
     document.querySelector(
@@ -825,6 +911,7 @@ const completeEegTime =
         "#completeEegTime"
 
     );
+
 
 const completeApplyCalibration =
 
@@ -834,6 +921,7 @@ const completeApplyCalibration =
 
     );
 
+
 const completeClearCalibration =
 
     document.querySelector(
@@ -841,6 +929,7 @@ const completeClearCalibration =
         "#completeClearCalibration"
 
     );
+
 
 const completeCalibrationStatus =
 
@@ -858,6 +947,7 @@ const caseLibrary =
 
     );
 
+
 const libraryCount =
 
     document.querySelector(
@@ -865,6 +955,7 @@ const libraryCount =
         "#libraryCount"
 
     );
+
 
 const saveLibraryButton =
 
@@ -874,6 +965,7 @@ const saveLibraryButton =
 
     );
 
+
 const librarySaveStatus =
 
     document.querySelector(
@@ -882,9 +974,38 @@ const librarySaveStatus =
 
     );
 
+
+const exportAllCsvButton =
+
+    document.querySelector(
+
+        "#exportAllCsvButton"
+
+    );
+
+
+const backupLibraryButton =
+
+    document.querySelector(
+
+        "#backupLibraryButton"
+
+    );
+
+
+const libraryBackupStatus =
+
+    document.querySelector(
+
+        "#libraryBackupStatus"
+
+    );
+
+
 let libraryRecords =
 
     [];
+
 
 /* =========================================================
 
@@ -892,11 +1013,14 @@ let libraryRecords =
 
    ========================================================= */
 
+
 function saveState() {
+
 
     caseState.version =
 
         STATE_VERSION;
+
 
     /*
 
@@ -904,11 +1028,13 @@ function saveState() {
 
     meaningful state change, not only RUNNING.
 
+
     This lets IndexedDB and the emergency mirror
 
     determine which copy is newest.
 
     */
+
 
     if (
 
@@ -920,15 +1046,18 @@ function saveState() {
 
     ) {
 
+
         caseState.elapsed_checkpoint_ms =
 
             getCurrentElapsedMs();
 
     }
 
+
     caseState.saved_at_epoch_ms =
 
         Date.now();
+
 
     return savePersistentCase(
 
@@ -938,11 +1067,14 @@ function saveState() {
 
 }
 
+
 async function clearSavedState() {
+
 
     await deletePersistentCase();
 
 }
+
 
 /* =========================================================
 
@@ -950,7 +1082,9 @@ async function clearSavedState() {
 
    ========================================================= */
 
+
 function initializeRuntimeTimer() {
+
 
     if (
 
@@ -961,6 +1095,7 @@ function initializeRuntimeTimer() {
         "RUNNING"
 
     ) {
+
 
         runtime.elapsedBaseMs =
 
@@ -976,13 +1111,16 @@ function initializeRuntimeTimer() {
 
             );
 
+
         runtime.perfAnchor =
 
             null;
 
+
         return;
 
     }
+
 
     const savedElapsed =
 
@@ -998,6 +1136,7 @@ function initializeRuntimeTimer() {
 
         );
 
+
     const savedAt =
 
         Number(
@@ -1011,6 +1150,7 @@ function initializeRuntimeTimer() {
             Date.now()
 
         );
+
 
     const downtime =
 
@@ -1026,6 +1166,7 @@ function initializeRuntimeTimer() {
 
         );
 
+
     runtime.elapsedBaseMs =
 
         savedElapsed
@@ -1034,13 +1175,16 @@ function initializeRuntimeTimer() {
 
         downtime;
 
+
     runtime.perfAnchor =
 
         performance.now();
 
 }
 
+
 function getCurrentElapsedMs() {
+
 
     if (
 
@@ -1051,6 +1195,7 @@ function getCurrentElapsedMs() {
         "RUNNING"
 
     ) {
+
 
         return Number(
 
@@ -1066,6 +1211,7 @@ function getCurrentElapsedMs() {
 
     }
 
+
     if (
 
         runtime.perfAnchor
@@ -1076,11 +1222,13 @@ function getCurrentElapsedMs() {
 
     ) {
 
+
         return runtime
 
             .elapsedBaseMs;
 
     }
+
 
     return (
 
@@ -1102,17 +1250,20 @@ function getCurrentElapsedMs() {
 
 }
 
+
 /* =========================================================
 
    TIME FORMAT
 
    ========================================================= */
 
+
 function pad2(
 
     value
 
 ) {
+
 
     return String(
 
@@ -1128,11 +1279,13 @@ function pad2(
 
 }
 
+
 function pad3(
 
     value
 
 ) {
+
 
     return String(
 
@@ -1148,11 +1301,13 @@ function pad3(
 
 }
 
+
 function formatElapsed(
 
     ms
 
 ) {
+
 
     const safeMs =
 
@@ -1168,6 +1323,7 @@ function formatElapsed(
 
         );
 
+
     const totalSeconds =
 
         safeMs
@@ -1175,6 +1331,7 @@ function formatElapsed(
         /
 
         1000;
+
 
     const hours =
 
@@ -1187,6 +1344,7 @@ function formatElapsed(
             3600
 
         );
+
 
     const minutes =
 
@@ -1208,6 +1366,7 @@ function formatElapsed(
 
         );
 
+
     const seconds =
 
         Math.floor(
@@ -1220,6 +1379,7 @@ function formatElapsed(
 
         );
 
+
     const milliseconds =
 
         Math.floor(
@@ -1231,6 +1391,7 @@ function formatElapsed(
             1000
 
         );
+
 
     return (
 
@@ -1252,17 +1413,20 @@ function formatElapsed(
 
 }
 
+
 function formatClock(
 
     value
 
 ) {
 
+
     if (!value) {
 
         return "";
 
     }
+
 
     const date =
 
@@ -1280,6 +1444,7 @@ function formatClock(
 
             );
 
+
     if (
 
         Number.isNaN(
@@ -1293,6 +1458,7 @@ function formatClock(
         return "";
 
     }
+
 
     return (
 
@@ -1314,17 +1480,20 @@ function formatClock(
 
 }
 
+
 function formatDateTimeLocal(
 
     value
 
 ) {
 
+
     if (!value) {
 
         return "";
 
     }
+
 
     const date =
 
@@ -1342,6 +1511,7 @@ function formatDateTimeLocal(
 
             );
 
+
     if (
 
         Number.isNaN(
@@ -1355,6 +1525,7 @@ function formatDateTimeLocal(
         return "";
 
     }
+
 
     return (
 
@@ -1415,11 +1586,14 @@ function formatDateTimeLocal(
     );
 
 }
+
+
 /* =========================================================
 
    CALIBRATION
 
    ========================================================= */
+
 
 function parseClockText(
 
@@ -1427,11 +1601,13 @@ function parseClockText(
 
 ) {
 
+
     const value =
 
         rawValue
 
             .trim();
+
 
     const match =
 
@@ -1441,11 +1617,13 @@ function parseClockText(
 
         );
 
+
     if (!match) {
 
         return null;
 
     }
+
 
     const hours =
 
@@ -1455,6 +1633,7 @@ function parseClockText(
 
         );
 
+
     const minutes =
 
         Number(
@@ -1463,6 +1642,7 @@ function parseClockText(
 
         );
 
+
     const seconds =
 
         Number(
@@ -1470,6 +1650,7 @@ function parseClockText(
             match[3]
 
         );
+
 
     if (
 
@@ -1484,6 +1665,7 @@ function parseClockText(
         return null;
 
     }
+
 
     const milliseconds =
 
@@ -1508,6 +1690,7 @@ function parseClockText(
                 )
 
         );
+
 
     return (
 
@@ -1557,11 +1740,13 @@ function parseClockText(
 
 }
 
+
 function formatClockMsOfDay(
 
     ms
 
 ) {
+
 
     const dayMs =
 
@@ -1578,6 +1763,7 @@ function formatClockMsOfDay(
         *
 
         1000;
+
 
     let safe =
 
@@ -1599,6 +1785,7 @@ function formatClockMsOfDay(
 
         dayMs;
 
+
     const hours =
 
         Math.floor(
@@ -1611,9 +1798,11 @@ function formatClockMsOfDay(
 
         );
 
+
     safe %=
 
         3600000;
+
 
     const minutes =
 
@@ -1627,9 +1816,11 @@ function formatClockMsOfDay(
 
         );
 
+
     safe %=
 
         60000;
+
 
     const seconds =
 
@@ -1643,6 +1834,7 @@ function formatClockMsOfDay(
 
         );
 
+
     const milliseconds =
 
         Math.floor(
@@ -1654,6 +1846,7 @@ function formatClockMsOfDay(
             1000
 
         );
+
 
     return (
 
@@ -1675,11 +1868,13 @@ function formatClockMsOfDay(
 
 }
 
+
 function normalizeClockDifferenceMs(
 
     difference
 
 ) {
+
 
     const dayMs =
 
@@ -1697,6 +1892,7 @@ function normalizeClockDifferenceMs(
 
         1000;
 
+
     const halfDayMs =
 
         dayMs
@@ -1705,9 +1901,11 @@ function normalizeClockDifferenceMs(
 
         2;
 
+
     let result =
 
         difference;
+
 
     if (
 
@@ -1719,9 +1917,11 @@ function normalizeClockDifferenceMs(
 
     ) {
 
+
         result -=
 
             dayMs;
+
 
     } else if (
 
@@ -1733,15 +1933,18 @@ function normalizeClockDifferenceMs(
 
     ) {
 
+
         result +=
 
             dayMs;
 
     }
 
+
     return result;
 
 }
+
 
 function applyCalibration(
 
@@ -1751,6 +1954,7 @@ function applyCalibration(
 
 ) {
 
+
     const referenceMs =
 
         parseClockText(
@@ -1759,6 +1963,7 @@ function applyCalibration(
 
         );
 
+
     const eegMs =
 
         parseClockText(
@@ -1766,6 +1971,7 @@ function applyCalibration(
             eegInput.value
 
         );
+
 
     if (
 
@@ -1785,15 +1991,18 @@ function applyCalibration(
 
     ) {
 
+
         alert(
 
             "Please enter both clocks as HH:MM:SS or HH:MM:SS.mmm."
 
         );
 
+
         return;
 
     }
+
 
     const rawDifference =
 
@@ -1803,6 +2012,7 @@ function applyCalibration(
 
         eegMs;
 
+
     const offsetMs =
 
         normalizeClockDifferenceMs(
@@ -1810,6 +2020,7 @@ function applyCalibration(
             rawDifference
 
         );
+
 
     caseState.clock_offset_seconds =
 
@@ -1819,6 +2030,7 @@ function applyCalibration(
 
         1000;
 
+
     caseState.calibration_reference_time =
 
         formatClockMsOfDay(
@@ -1826,6 +2038,7 @@ function applyCalibration(
             referenceMs
 
         );
+
 
     caseState.calibration_eeg_time =
 
@@ -1835,33 +2048,43 @@ function applyCalibration(
 
         );
 
+
     saveState();
+
 
     render();
 
 }
 
+
 function clearCalibration() {
+
 
     caseState.clock_offset_seconds =
 
         null;
 
+
     caseState.calibration_reference_time =
 
         null;
+
 
     caseState.calibration_eeg_time =
 
         null;
 
+
     saveState();
+
 
     render();
 
 }
 
+
 function hasCalibration() {
+
 
     return Number.isFinite(
 
@@ -1873,11 +2096,13 @@ function hasCalibration() {
 
 }
 
+
 function getEegDatetime(
 
     referenceDatetime
 
 ) {
+
 
     if (
 
@@ -1889,9 +2114,11 @@ function getEegDatetime(
 
     ) {
 
+
         return null;
 
     }
+
 
     const reference =
 
@@ -1900,6 +2127,7 @@ function getEegDatetime(
             referenceDatetime
 
         );
+
 
     if (
 
@@ -1911,9 +2139,11 @@ function getEegDatetime(
 
     ) {
 
+
         return null;
 
     }
+
 
     return new Date(
 
@@ -1937,11 +2167,13 @@ function getEegDatetime(
 
 }
 
+
 function formatSignedOffset(
 
     seconds
 
 ) {
+
 
     const value =
 
@@ -1950,6 +2182,7 @@ function formatSignedOffset(
             seconds
 
         );
+
 
     if (
 
@@ -1961,9 +2194,11 @@ function formatSignedOffset(
 
     ) {
 
+
         return "Not calibrated";
 
     }
+
 
     const sign =
 
@@ -1977,6 +2212,7 @@ function formatSignedOffset(
 
             "";
 
+
     return (
 
         `${sign}${value.toFixed(3)} s`
@@ -1984,6 +2220,7 @@ function formatSignedOffset(
     );
 
 }
+
 
 function renderCalibration(
 
@@ -1995,6 +2232,7 @@ function renderCalibration(
 
 ) {
 
+
     referenceInput.value =
 
         caseState
@@ -2004,6 +2242,7 @@ function renderCalibration(
         ||
 
         "";
+
 
     eegInput.value =
 
@@ -2015,19 +2254,23 @@ function renderCalibration(
 
         "";
 
+
     if (
 
         !hasCalibration()
 
     ) {
 
+
         statusElement.textContent =
 
             "Not calibrated";
 
+
         return;
 
     }
+
 
     statusElement.textContent =
 
@@ -2041,13 +2284,16 @@ function renderCalibration(
 
 }
 
+
 /* =========================================================
 
    CASE ACTIONS
 
    ========================================================= */
 
+
 function startExperiment() {
+
 
     const caseId =
 
@@ -2055,13 +2301,16 @@ function startExperiment() {
 
             .trim();
 
+
     const experimentType =
 
         experimentTypeInput.value
 
             .trim();
 
+
     if (!caseId) {
+
 
         alert(
 
@@ -2069,9 +2318,11 @@ function startExperiment() {
 
         );
 
+
         return;
 
     }
+
 
     /*
 
@@ -2081,73 +2332,91 @@ function startExperiment() {
 
     */
 
+
     const now =
 
         new Date();
+
 
     caseState.case_id =
 
         caseId;
 
+
     caseState.library_id =
 
         null;
+
 
     caseState.library_saved_at_epoch_ms =
 
         null;
 
+
     caseState.experiment_type =
 
         experimentType;
+
 
     caseState.state =
 
         "RUNNING";
 
+
     caseState.experiment_start_datetime =
 
         now.toISOString();
+
 
     caseState.experiment_end_datetime =
 
         null;
 
+
     caseState.elapsed_checkpoint_ms =
 
         0;
+
 
     caseState.saved_at_epoch_ms =
 
         Date.now();
 
+
     caseState.events =
 
         [];
+
 
     caseState.removed_stack =
 
         [];
 
+
     runtime.elapsedBaseMs =
 
         0;
+
 
     runtime.perfAnchor =
 
         performance.now();
 
+
     saveState();
+
 
     render();
 
 }
+
 
 function recordEvent(
 
     eventName
 
 ) {
+
 
     if (
 
@@ -2163,9 +2432,11 @@ function recordEvent(
 
     }
 
+
     /*
 
     Timestamp first.
+
 
     Scientific timing values are captured
 
@@ -2173,13 +2444,16 @@ function recordEvent(
 
     */
 
+
     const now =
 
         new Date();
 
+
     const elapsedMs =
 
         getCurrentElapsedMs();
+
 
     const note =
 
@@ -2187,19 +2461,24 @@ function recordEvent(
 
             .trim();
 
+
     const event = {
+
 
         event_original:
 
             eventName,
 
+
         event:
 
             eventName,
 
+
         reference_datetime:
 
             now.toISOString(),
+
 
         elapsed_seconds:
 
@@ -2209,25 +2488,31 @@ function recordEvent(
 
             1000,
 
+
         note:
 
             note,
+
 
         status:
 
             "active",
 
+
         renamed_at:
 
             null,
+
 
         removed_at:
 
             null,
 
+
         restored_at:
 
             null,
+
 
         correction_count:
 
@@ -2235,21 +2520,26 @@ function recordEvent(
 
     };
 
+
     caseState.events.push(
 
         event
 
     );
 
+
     eventNoteInput.value =
 
         "";
 
+
     saveState();
+
 
     render();
 
 }
+
 
 function endExperiment() {
 
@@ -2306,6 +2596,7 @@ function endExperiment() {
 
     render();
 }
+
 
 function resumeExperiment() {
 
@@ -2406,6 +2697,7 @@ function resumeExperiment() {
     render();
 }
 
+
 async function newCase() {
 
     const confirmed =
@@ -2449,13 +2741,16 @@ async function newCase() {
     render();
 }
 
+
 /* =========================================================
 
    RUNNING UNDO / RESTORE
 
    ========================================================= */
 
+
 function undoLastEvent() {
+
 
     if (
 
@@ -2471,6 +2766,7 @@ function undoLastEvent() {
 
     }
 
+
     for (
 
         let index =
@@ -2481,11 +2777,14 @@ function undoLastEvent() {
 
             1;
 
+
         index >= 0;
+
 
         index--
 
     ) {
+
 
         const event =
 
@@ -2494,6 +2793,7 @@ function undoLastEvent() {
                 index
 
             ];
+
 
         if (
 
@@ -2509,15 +2809,18 @@ function undoLastEvent() {
 
         }
 
+
         event.status =
 
             "removed";
+
 
         event.removed_at =
 
             new Date()
 
                 .toISOString();
+
 
         event.correction_count =
 
@@ -2535,6 +2838,7 @@ function undoLastEvent() {
 
             1;
 
+
         if (
 
             !caseState
@@ -2549,6 +2853,7 @@ function undoLastEvent() {
 
         ) {
 
+
             caseState
 
                 .removed_stack
@@ -2561,9 +2866,12 @@ function undoLastEvent() {
 
         }
 
+
         saveState();
 
+
         render();
+
 
         return;
 
@@ -2571,7 +2879,9 @@ function undoLastEvent() {
 
 }
 
+
 function restoreLastRemovedEvent() {
+
 
     if (
 
@@ -2587,6 +2897,7 @@ function restoreLastRemovedEvent() {
 
     }
 
+
     while (
 
         caseState
@@ -2601,6 +2912,7 @@ function restoreLastRemovedEvent() {
 
     ) {
 
+
         const index =
 
             caseState
@@ -2609,6 +2921,7 @@ function restoreLastRemovedEvent() {
 
                 .pop();
 
+
         const event =
 
             caseState.events[
@@ -2616,6 +2929,7 @@ function restoreLastRemovedEvent() {
                 index
 
             ];
+
 
         if (
 
@@ -2635,15 +2949,18 @@ function restoreLastRemovedEvent() {
 
         }
 
+
         event.status =
 
             "active";
+
 
         event.restored_at =
 
             new Date()
 
                 .toISOString();
+
 
         event.correction_count =
 
@@ -2661,26 +2978,33 @@ function restoreLastRemovedEvent() {
 
             1;
 
+
         saveState();
 
+
         render();
+
 
         return;
 
     }
 
 }
+
+
 /* =========================================================
 
    COMPLETE QC ACTIONS
 
    ========================================================= */
 
+
 function renameEventAtIndex(
 
     index
 
 ) {
+
 
     if (
 
@@ -2696,6 +3020,7 @@ function renameEventAtIndex(
 
     }
 
+
     const event =
 
         caseState.events[
@@ -2704,11 +3029,13 @@ function renameEventAtIndex(
 
         ];
 
+
     if (!event) {
 
         return;
 
     }
+
 
     const newName =
 
@@ -2719,6 +3046,7 @@ function renameEventAtIndex(
             event.event
 
         );
+
 
     if (
 
@@ -2734,13 +3062,16 @@ function renameEventAtIndex(
 
     }
 
+
     const cleanName =
 
         newName
 
             .trim();
 
+
     if (!cleanName) {
+
 
         alert(
 
@@ -2748,9 +3079,11 @@ function renameEventAtIndex(
 
         );
 
+
         return;
 
     }
+
 
     if (
 
@@ -2766,9 +3099,11 @@ function renameEventAtIndex(
 
     }
 
+
     /*
 
     Only the interpreted label changes.
+
 
     Original event label,
 
@@ -2778,15 +3113,18 @@ function renameEventAtIndex(
 
     */
 
+
     event.event =
 
         cleanName;
+
 
     event.renamed_at =
 
         new Date()
 
             .toISOString();
+
 
     event.correction_count =
 
@@ -2804,17 +3142,21 @@ function renameEventAtIndex(
 
         1;
 
+
     saveState();
+
 
     render();
 
 }
+
 
 function toggleEventStatusAtIndex(
 
     index
 
 ) {
+
 
     if (
 
@@ -2830,6 +3172,7 @@ function toggleEventStatusAtIndex(
 
     }
 
+
     const event =
 
         caseState.events[
@@ -2838,11 +3181,13 @@ function toggleEventStatusAtIndex(
 
         ];
 
+
     if (!event) {
 
         return;
 
     }
+
 
     if (
 
@@ -2854,15 +3199,18 @@ function toggleEventStatusAtIndex(
 
     ) {
 
+
         event.status =
 
             "removed";
+
 
         event.removed_at =
 
             new Date()
 
                 .toISOString();
+
 
         event.correction_count =
 
@@ -2879,6 +3227,7 @@ function toggleEventStatusAtIndex(
             +
 
             1;
+
 
         if (
 
@@ -2894,6 +3243,7 @@ function toggleEventStatusAtIndex(
 
         ) {
 
+
             caseState
 
                 .removed_stack
@@ -2906,17 +3256,21 @@ function toggleEventStatusAtIndex(
 
         }
 
+
     } else {
+
 
         event.status =
 
             "active";
+
 
         event.restored_at =
 
             new Date()
 
                 .toISOString();
+
 
         event.correction_count =
 
@@ -2933,6 +3287,7 @@ function toggleEventStatusAtIndex(
             +
 
             1;
+
 
         caseState.removed_stack =
 
@@ -2954,11 +3309,14 @@ function toggleEventStatusAtIndex(
 
     }
 
+
     saveState();
+
 
     render();
 
 }
+
 
 /* =========================================================
    CASE LIBRARY ACTIONS
@@ -2980,6 +3338,1031 @@ async function refreshLibraryRecords() {
             [];
     }
 }
+
+
+/* =========================================================
+   BATCH CSV EXPORT
+   ========================================================= */
+
+function hasCalibrationForState(
+    sourceState
+) {
+    return Number.isFinite(
+        sourceState
+            ?.clock_offset_seconds
+    );
+}
+
+
+function getEegDatetimeForState(
+    referenceDatetime,
+    sourceState
+) {
+    if (
+        !referenceDatetime
+        ||
+        !hasCalibrationForState(
+            sourceState
+        )
+    ) {
+        return null;
+    }
+
+    const reference =
+        new Date(
+            referenceDatetime
+        );
+
+    if (
+        Number.isNaN(
+            reference.getTime()
+        )
+    ) {
+        return null;
+    }
+
+    return new Date(
+        reference.getTime()
+        -
+        (
+            sourceState
+                .clock_offset_seconds
+            *
+            1000
+        )
+    );
+}
+
+
+function buildCsvForState(
+    rawState
+) {
+    const sourceState =
+        normalizeLoadedState(
+            rawState
+            ||
+            {}
+        );
+
+    const rows = [
+        makeCsvRow(
+            CSV_COLUMNS
+        ),
+    ];
+
+    sourceState.events.forEach(
+        (
+            event,
+            index
+        ) => {
+            const eegDatetime =
+                getEegDatetimeForState(
+                    event.reference_datetime,
+                    sourceState
+                );
+
+            const record = {
+                case_id:
+                    sourceState.case_id,
+
+                experiment_type:
+                    sourceState.experiment_type,
+
+                event_preset:
+                    sourceState.event_preset
+                    ||
+                    "",
+
+                experiment_start_datetime:
+                    formatDateTimeLocal(
+                        sourceState
+                            .experiment_start_datetime
+                    ),
+
+                experiment_end_datetime:
+                    formatDateTimeLocal(
+                        sourceState
+                            .experiment_end_datetime
+                    ),
+
+                event_index:
+                    index
+                    +
+                    1,
+
+                event_original:
+                    event.event_original,
+
+                event:
+                    event.event,
+
+                event_status:
+                    event.status,
+
+                note:
+                    event.note,
+
+                reference_datetime:
+                    formatDateTimeLocal(
+                        event.reference_datetime
+                    ),
+
+                eeg_datetime:
+                    eegDatetime
+                        ?
+                        formatDateTimeLocal(
+                            eegDatetime
+                        )
+                        :
+                        "",
+
+                elapsed_seconds:
+                    Number(
+                        event.elapsed_seconds
+                    ).toFixed(
+                        3
+                    ),
+
+                elapsed_time:
+                    formatElapsed(
+                        Number(
+                            event.elapsed_seconds
+                        )
+                        *
+                        1000
+                    ),
+
+                renamed_at:
+                    formatDateTimeLocal(
+                        event.renamed_at
+                    ),
+
+                removed_at:
+                    formatDateTimeLocal(
+                        event.removed_at
+                    ),
+
+                restored_at:
+                    formatDateTimeLocal(
+                        event.restored_at
+                    ),
+
+                correction_count:
+                    event.correction_count,
+
+                clock_offset_s:
+                    hasCalibrationForState(
+                        sourceState
+                    )
+                        ?
+                        Number(
+                            sourceState
+                                .clock_offset_seconds
+                        ).toFixed(
+                            3
+                        )
+                        :
+                        "",
+
+                calibration_reference_time:
+                    sourceState
+                        .calibration_reference_time
+                    ||
+                    "",
+
+                calibration_eeg_time:
+                    sourceState
+                        .calibration_eeg_time
+                    ||
+                    "",
+            };
+
+            rows.push(
+                makeCsvRow(
+                    CSV_COLUMNS.map(
+                        column =>
+                            record[
+                                column
+                            ]
+                    )
+                )
+            );
+        }
+    );
+
+    return rows.join(
+        "\r\n"
+    );
+}
+
+
+function getDosDateTime(
+    value
+) {
+    const date =
+        value instanceof Date
+            ?
+            value
+            :
+            new Date(
+                value
+                ||
+                Date.now()
+            );
+
+    const safeDate =
+        Number.isNaN(
+            date.getTime()
+        )
+            ?
+            new Date()
+            :
+            date;
+
+    const year =
+        Math.max(
+            1980,
+            safeDate.getFullYear()
+        );
+
+    const dosTime =
+        (
+            safeDate.getHours()
+            <<
+            11
+        )
+        |
+        (
+            safeDate.getMinutes()
+            <<
+            5
+        )
+        |
+        Math.floor(
+            safeDate.getSeconds()
+            /
+            2
+        );
+
+    const dosDate =
+        (
+            (year - 1980)
+            <<
+            9
+        )
+        |
+        (
+            (safeDate.getMonth() + 1)
+            <<
+            5
+        )
+        |
+        safeDate.getDate();
+
+    return {
+        dosTime,
+        dosDate,
+    };
+}
+
+
+function crc32(
+    bytes
+) {
+    let crc =
+        0xFFFFFFFF;
+
+    for (
+        let index = 0;
+        index < bytes.length;
+        index++
+    ) {
+        crc ^=
+            bytes[index];
+
+        for (
+            let bit = 0;
+            bit < 8;
+            bit++
+        ) {
+            crc =
+                (
+                    crc >>> 1
+                )
+                ^
+                (
+                    crc & 1
+                        ?
+                        0xEDB88320
+                        :
+                        0
+                );
+        }
+    }
+
+    return (
+        crc
+        ^
+        0xFFFFFFFF
+    ) >>> 0;
+}
+
+
+function concatUint8Arrays(
+    arrays
+) {
+    const totalLength =
+        arrays.reduce(
+            (
+                total,
+                array
+            ) =>
+                total
+                +
+                array.length,
+            0
+        );
+
+    const result =
+        new Uint8Array(
+            totalLength
+        );
+
+    let offset =
+        0;
+
+    arrays.forEach(
+        array => {
+            result.set(
+                array,
+                offset
+            );
+
+            offset +=
+                array.length;
+        }
+    );
+
+    return result;
+}
+
+
+function buildStoredZip(
+    files
+) {
+    const encoder =
+        new TextEncoder();
+
+    const localParts =
+        [];
+
+    const centralParts =
+        [];
+
+    let localOffset =
+        0;
+
+    files.forEach(
+        file => {
+            const nameBytes =
+                encoder.encode(
+                    file.name
+                );
+
+            const contentBytes =
+                file.bytes;
+
+            const checksum =
+                crc32(
+                    contentBytes
+                );
+
+            const {
+                dosTime,
+                dosDate,
+            } =
+                getDosDateTime(
+                    file.modifiedAt
+                );
+
+            const localHeader =
+                new Uint8Array(
+                    30
+                    +
+                    nameBytes.length
+                );
+
+            const localView =
+                new DataView(
+                    localHeader.buffer
+                );
+
+            localView.setUint32(
+                0,
+                0x04034B50,
+                true
+            );
+            localView.setUint16(
+                4,
+                20,
+                true
+            );
+            localView.setUint16(
+                6,
+                0x0800,
+                true
+            );
+            localView.setUint16(
+                8,
+                0,
+                true
+            );
+            localView.setUint16(
+                10,
+                dosTime,
+                true
+            );
+            localView.setUint16(
+                12,
+                dosDate,
+                true
+            );
+            localView.setUint32(
+                14,
+                checksum,
+                true
+            );
+            localView.setUint32(
+                18,
+                contentBytes.length,
+                true
+            );
+            localView.setUint32(
+                22,
+                contentBytes.length,
+                true
+            );
+            localView.setUint16(
+                26,
+                nameBytes.length,
+                true
+            );
+            localView.setUint16(
+                28,
+                0,
+                true
+            );
+
+            localHeader.set(
+                nameBytes,
+                30
+            );
+
+            localParts.push(
+                localHeader,
+                contentBytes
+            );
+
+            const centralHeader =
+                new Uint8Array(
+                    46
+                    +
+                    nameBytes.length
+                );
+
+            const centralView =
+                new DataView(
+                    centralHeader.buffer
+                );
+
+            centralView.setUint32(
+                0,
+                0x02014B50,
+                true
+            );
+            centralView.setUint16(
+                4,
+                20,
+                true
+            );
+            centralView.setUint16(
+                6,
+                20,
+                true
+            );
+            centralView.setUint16(
+                8,
+                0x0800,
+                true
+            );
+            centralView.setUint16(
+                10,
+                0,
+                true
+            );
+            centralView.setUint16(
+                12,
+                dosTime,
+                true
+            );
+            centralView.setUint16(
+                14,
+                dosDate,
+                true
+            );
+            centralView.setUint32(
+                16,
+                checksum,
+                true
+            );
+            centralView.setUint32(
+                20,
+                contentBytes.length,
+                true
+            );
+            centralView.setUint32(
+                24,
+                contentBytes.length,
+                true
+            );
+            centralView.setUint16(
+                28,
+                nameBytes.length,
+                true
+            );
+            centralView.setUint16(
+                30,
+                0,
+                true
+            );
+            centralView.setUint16(
+                32,
+                0,
+                true
+            );
+            centralView.setUint16(
+                34,
+                0,
+                true
+            );
+            centralView.setUint16(
+                36,
+                0,
+                true
+            );
+            centralView.setUint32(
+                38,
+                0,
+                true
+            );
+            centralView.setUint32(
+                42,
+                localOffset,
+                true
+            );
+
+            centralHeader.set(
+                nameBytes,
+                46
+            );
+
+            centralParts.push(
+                centralHeader
+            );
+
+            localOffset +=
+                localHeader.length
+                +
+                contentBytes.length;
+        }
+    );
+
+    const localData =
+        concatUint8Arrays(
+            localParts
+        );
+
+    const centralData =
+        concatUint8Arrays(
+            centralParts
+        );
+
+    const endRecord =
+        new Uint8Array(
+            22
+        );
+
+    const endView =
+        new DataView(
+            endRecord.buffer
+        );
+
+    endView.setUint32(
+        0,
+        0x06054B50,
+        true
+    );
+    endView.setUint16(
+        4,
+        0,
+        true
+    );
+    endView.setUint16(
+        6,
+        0,
+        true
+    );
+    endView.setUint16(
+        8,
+        files.length,
+        true
+    );
+    endView.setUint16(
+        10,
+        files.length,
+        true
+    );
+    endView.setUint32(
+        12,
+        centralData.length,
+        true
+    );
+    endView.setUint32(
+        16,
+        localData.length,
+        true
+    );
+    endView.setUint16(
+        20,
+        0,
+        true
+    );
+
+    return concatUint8Arrays(
+        [
+            localData,
+            centralData,
+            endRecord,
+        ]
+    );
+}
+
+
+function createBatchCsvFilename(
+    record,
+    usedNames
+) {
+    const sourceState =
+        record.case_data
+        ||
+        {};
+
+    const baseName =
+        safeFilenamePart(
+            sourceState.case_id
+            ||
+            record.case_id
+            ||
+            "case"
+        )
+        +
+        "_"
+        +
+        formatFilenameTimestamp(
+            sourceState
+                .experiment_start_datetime
+            ||
+            record.saved_at_epoch_ms
+        );
+
+    let filename =
+        `${baseName}.csv`;
+
+    if (
+        !usedNames.has(
+            filename
+        )
+    ) {
+        usedNames.add(
+            filename
+        );
+
+        return filename;
+    }
+
+    const librarySuffix =
+        safeFilenamePart(
+            record.library_id
+            ||
+            "archive"
+        )
+            .slice(
+                -8
+            );
+
+    filename =
+        `${baseName}_${librarySuffix}.csv`;
+
+    let counter =
+        2;
+
+    while (
+        usedNames.has(
+            filename
+        )
+    ) {
+        filename =
+            `${baseName}_${librarySuffix}_${counter}.csv`;
+
+        counter++;
+    }
+
+    usedNames.add(
+        filename
+    );
+
+    return filename;
+}
+
+
+async function exportAllLibraryCsv() {
+    try {
+        await refreshLibraryRecords();
+
+        if (
+            libraryRecords.length
+            ===
+            0
+        ) {
+            alert(
+                "No archived cases to export."
+            );
+
+            return;
+        }
+
+        const encoder =
+            new TextEncoder();
+
+        const usedNames =
+            new Set();
+
+        const files =
+            libraryRecords.map(
+                record => {
+                    const sourceState =
+                        record.case_data
+                        ||
+                        {};
+
+                    const csv =
+                        buildCsvForState(
+                            sourceState
+                        );
+
+                    return {
+                        name:
+                            createBatchCsvFilename(
+                                record,
+                                usedNames
+                            ),
+                        bytes:
+                            encoder.encode(
+                                "\uFEFF"
+                                +
+                                csv
+                            ),
+                        modifiedAt:
+                            sourceState
+                                .experiment_start_datetime
+                            ||
+                            record.saved_at_epoch_ms
+                            ||
+                            Date.now(),
+                    };
+                }
+            );
+
+        const zipBytes =
+            buildStoredZip(
+                files
+            );
+
+        const createdAt =
+            new Date();
+
+        const blob =
+            new Blob(
+                [zipBytes],
+                {
+                    type:
+                        "application/zip",
+                }
+            );
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+        link.href =
+            url;
+
+        link.download =
+            "experiment-marker-csv-export_"
+            +
+            formatFilenameTimestamp(
+                createdAt
+            )
+            +
+            ".zip";
+
+        document.body.appendChild(
+            link
+        );
+
+        link.click();
+        link.remove();
+
+        setTimeout(
+            () => {
+                URL.revokeObjectURL(
+                    url
+                );
+            },
+            1000
+        );
+
+    } catch (error) {
+        console.error(
+            "Unable to export Case Library CSV files:",
+            error
+        );
+
+        alert(
+            "Unable to export all Case Library CSV files."
+        );
+    }
+}
+
+
+async function exportLibraryBackup() {
+
+    try {
+
+        /*
+        Read the archive again immediately before export so the
+        backup reflects the latest Case Library state.
+        The current working case is intentionally excluded.
+        */
+
+        await refreshLibraryRecords();
+
+        if (
+            libraryRecords.length
+            ===
+            0
+        ) {
+            if (libraryBackupStatus) {
+                libraryBackupStatus.textContent =
+                    "No archived cases to back up.";
+            }
+
+            alert(
+                "No archived cases to back up."
+            );
+
+            return;
+        }
+
+        const createdAt =
+            new Date();
+
+        const backup = {
+            backup_format:
+                "experiment-marker-library",
+            backup_version:
+                1,
+            created_at:
+                createdAt.toISOString(),
+            app_state_version:
+                STATE_VERSION,
+            case_count:
+                libraryRecords.length,
+            cases:
+                libraryRecords.map(
+                    record => ({
+                        library_id:
+                            record.library_id,
+                        case_id:
+                            record.case_id
+                            ??
+                            record.case_data?.case_id
+                            ??
+                            "",
+                        saved_at_epoch_ms:
+                            record.saved_at_epoch_ms
+                            ??
+                            null,
+                        case_data:
+                            record.case_data,
+                    })
+                ),
+        };
+
+        const json =
+            JSON.stringify(
+                backup,
+                null,
+                2
+            );
+
+        const blob =
+            new Blob(
+                [json],
+                {
+                    type:
+                        "application/json;charset=utf-8",
+                }
+            );
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+        link.href =
+            url;
+
+        link.download =
+            "experiment-marker-library-backup_"
+            +
+            formatFilenameTimestamp(
+                createdAt
+            )
+            +
+            ".json";
+
+        document.body.appendChild(
+            link
+        );
+
+        link.click();
+        link.remove();
+
+        setTimeout(
+            () => {
+                URL.revokeObjectURL(
+                    url
+                );
+            },
+            1000
+        );
+
+        if (libraryBackupStatus) {
+            libraryBackupStatus.textContent =
+                `${libraryRecords.length} archived case`
+                +
+                (
+                    libraryRecords.length
+                    ===
+                    1
+                        ?
+                        ""
+                        :
+                        "s"
+                )
+                +
+                " backed up as JSON.";
+        }
+
+    } catch (error) {
+        console.error(
+            "Unable to back up Case Library:",
+            error
+        );
+
+        if (libraryBackupStatus) {
+            libraryBackupStatus.textContent =
+                "Backup failed.";
+        }
+
+        alert(
+            "Unable to back up Case Library."
+        );
+    }
+}
+
 
 async function archiveCurrentCase() {
 
@@ -3039,6 +4422,7 @@ async function archiveCurrentCase() {
     }
 }
 
+
 async function openLibraryCase(
     libraryId
 ) {
@@ -3073,6 +4457,7 @@ async function openLibraryCase(
 
     render();
 }
+
 
 async function removeLibraryCase(
     libraryId
@@ -3127,13 +4512,16 @@ async function removeLibraryCase(
     }
 }
 
+
 /* =========================================================
 
    EVENT HELPERS
 
    ========================================================= */
 
+
 function getLatestActiveEvent() {
+
 
     for (
 
@@ -3145,11 +4533,14 @@ function getLatestActiveEvent() {
 
             1;
 
+
         index >= 0;
+
 
         index--
 
     ) {
+
 
         const event =
 
@@ -3158,6 +4549,7 @@ function getLatestActiveEvent() {
                 index
 
             ];
+
 
         if (
 
@@ -3169,17 +4561,21 @@ function getLatestActiveEvent() {
 
         ) {
 
+
             return event;
 
         }
 
     }
 
+
     return null;
 
 }
 
+
 function hasActiveEvent() {
+
 
     return caseState.events.some(
 
@@ -3195,7 +4591,9 @@ function hasActiveEvent() {
 
 }
 
+
 function hasRestorableEvent() {
+
 
     return caseState
 
@@ -3227,11 +4625,13 @@ function hasRestorableEvent() {
 
 }
 
+
 /* =========================================================
 
    CSV EXPORT
 
    ========================================================= */
+
 
 function csvEscape(
     value
@@ -3271,11 +4671,13 @@ function csvEscape(
     return text;
 }
 
+
 function makeCsvRow(
 
     values
 
 ) {
+
 
     return values
 
@@ -3293,263 +4695,24 @@ function makeCsvRow(
 
 }
 
+
 function buildCsv() {
 
-    const rows = [
+    return buildCsvForState(
 
-        makeCsvRow(
-
-            CSV_COLUMNS
-
-        ),
-
-    ];
-
-    caseState.events.forEach(
-
-        (
-
-            event,
-
-            index
-
-        ) => {
-
-            const eegDatetime =
-
-                getEegDatetime(
-
-                    event.reference_datetime
-
-                );
-
-            const record = {
-
-                case_id:
-
-                    caseState.case_id,
-
-                experiment_type:
-
-                    caseState
-
-                        .experiment_type,
-
-                event_preset:
-
-                    caseState
-
-                        .event_preset
-
-                    ||
-
-                    "",
-
-                experiment_start_datetime:
-
-                    formatDateTimeLocal(
-
-                        caseState
-
-                            .experiment_start_datetime
-
-                    ),
-
-                experiment_end_datetime:
-
-                    formatDateTimeLocal(
-
-                        caseState
-
-                            .experiment_end_datetime
-
-                    ),
-
-                event_index:
-
-                    index
-
-                    +
-
-                    1,
-
-                event_original:
-
-                    event.event_original,
-
-                event:
-
-                    event.event,
-
-                event_status:
-
-                    event.status,
-
-                note:
-
-                    event.note,
-
-                reference_datetime:
-
-                    formatDateTimeLocal(
-
-                        event.reference_datetime
-
-                    ),
-
-                eeg_datetime:
-
-                    eegDatetime
-
-                        ?
-
-                        formatDateTimeLocal(
-
-                            eegDatetime
-
-                        )
-
-                        :
-
-                        "",
-
-                elapsed_seconds:
-
-                    Number(
-
-                        event.elapsed_seconds
-
-                    ).toFixed(
-
-                        3
-
-                    ),
-
-                elapsed_time:
-
-                    formatElapsed(
-
-                        Number(
-
-                            event.elapsed_seconds
-
-                        )
-
-                        *
-
-                        1000
-
-                    ),
-
-                renamed_at:
-
-                    formatDateTimeLocal(
-
-                        event.renamed_at
-
-                    ),
-
-                removed_at:
-
-                    formatDateTimeLocal(
-
-                        event.removed_at
-
-                    ),
-
-                restored_at:
-
-                    formatDateTimeLocal(
-
-                        event.restored_at
-
-                    ),
-
-                correction_count:
-
-                    event.correction_count,
-
-                clock_offset_s:
-
-                    hasCalibration()
-
-                        ?
-
-                        Number(
-
-                            caseState
-
-                                .clock_offset_seconds
-
-                        ).toFixed(
-
-                            3
-
-                        )
-
-                        :
-
-                        "",
-
-                calibration_reference_time:
-
-                    caseState
-
-                        .calibration_reference_time
-
-                    ||
-
-                    "",
-
-                calibration_eeg_time:
-
-                    caseState
-
-                        .calibration_eeg_time
-
-                    ||
-
-                    "",
-
-            };
-
-            rows.push(
-
-                makeCsvRow(
-
-                    CSV_COLUMNS.map(
-
-                        column =>
-
-                            record[
-
-                                column
-
-                            ]
-
-                    )
-
-                )
-
-            );
-
-        }
-
-    );
-
-    return rows.join(
-
-        "\r\n"
+        caseState
 
     );
 
 }
+
 
 function safeFilenamePart(
 
     value
 
 ) {
+
 
     const text =
 
@@ -3564,6 +4727,7 @@ function safeFilenamePart(
         )
 
             .trim();
+
 
     return (
 
@@ -3593,11 +4757,13 @@ function safeFilenamePart(
 
 }
 
+
 function formatFilenameTimestamp(
 
     value
 
 ) {
+
 
     const date =
 
@@ -3611,6 +4777,7 @@ function formatFilenameTimestamp(
 
         );
 
+
     if (
 
         Number.isNaN(
@@ -3621,9 +4788,11 @@ function formatFilenameTimestamp(
 
     ) {
 
+
         return "unknown_time";
 
     }
+
 
     return (
 
@@ -3681,7 +4850,9 @@ function formatFilenameTimestamp(
 
 }
 
+
 function exportCsv() {
+
 
     if (
 
@@ -3697,9 +4868,11 @@ function exportCsv() {
 
     }
 
+
     const csv =
 
         buildCsv();
+
 
     /*
 
@@ -3708,6 +4881,7 @@ function exportCsv() {
     with Excel and Chinese text.
 
     */
+
 
     const blob =
 
@@ -3731,6 +4905,7 @@ function exportCsv() {
 
         );
 
+
     const url =
 
         URL.createObjectURL(
@@ -3739,6 +4914,7 @@ function exportCsv() {
 
         );
 
+
     const link =
 
         document.createElement(
@@ -3746,6 +4922,7 @@ function exportCsv() {
             "a"
 
         );
+
 
     const filename =
 
@@ -3773,13 +4950,16 @@ function exportCsv() {
 
         ".csv";
 
+
     link.href =
 
         url;
 
+
     link.download =
 
         filename;
+
 
     document.body
 
@@ -3789,13 +4969,17 @@ function exportCsv() {
 
         );
 
+
     link.click();
 
+
     link.remove();
+
 
     setTimeout(
 
         () => {
+
 
             URL.revokeObjectURL(
 
@@ -3810,13 +4994,17 @@ function exportCsv() {
     );
 
 }
+
+
 /* =========================================================
 
    RENDER
 
    ========================================================= */
 
+
 function render() {
+
 
     readyView.classList.add(
 
@@ -3824,11 +5012,13 @@ function render() {
 
     );
 
+
     runningView.classList.add(
 
         "hidden"
 
     );
+
 
     completeView.classList.add(
 
@@ -3836,9 +5026,11 @@ function render() {
 
     );
 
+
     statusBadge.textContent =
 
         caseState.state;
+
 
     if (
 
@@ -3850,11 +5042,14 @@ function render() {
 
     ) {
 
+
         renderReady();
+
 
         return;
 
     }
+
 
     if (
 
@@ -3866,15 +5061,19 @@ function render() {
 
     ) {
 
+
         renderRunning();
+
 
         return;
 
     }
 
+
     renderComplete();
 
 }
+
 
 function renderCaseLibrary() {
 
@@ -3887,6 +5086,43 @@ function renderCaseLibrary() {
             `· ${libraryRecords.length}`
             :
             "";
+
+    if (exportAllCsvButton) {
+        exportAllCsvButton.disabled =
+            libraryRecords.length
+            ===
+            0;
+    }
+
+    if (backupLibraryButton) {
+        backupLibraryButton.disabled =
+            libraryRecords.length
+            ===
+            0;
+    }
+
+    if (libraryBackupStatus) {
+        libraryBackupStatus.textContent =
+            libraryRecords.length
+            ===
+            0
+                ?
+                "No archived cases to back up."
+                :
+                `${libraryRecords.length} archived case`
+                +
+                (
+                    libraryRecords.length
+                    ===
+                    1
+                        ?
+                        ""
+                        :
+                        "s"
+                )
+                +
+                " ready for JSON backup.";
+    }
 
     if (
         libraryRecords.length
@@ -3922,6 +5158,7 @@ function renderCaseLibrary() {
             item.className =
                 "library-item";
 
+
             const topRow =
                 document.createElement(
                     "div"
@@ -3930,10 +5167,12 @@ function renderCaseLibrary() {
             topRow.className =
                 "library-top-row";
 
+
             const info =
                 document.createElement(
                     "div"
                 );
+
 
             const caseId =
                 document.createElement(
@@ -3947,6 +5186,7 @@ function renderCaseLibrary() {
                 record.case_id
                 ||
                 "Unnamed Case";
+
 
             const meta =
                 document.createElement(
@@ -3981,6 +5221,7 @@ function renderCaseLibrary() {
                     record.saved_at_epoch_ms
                 );
 
+
             info.appendChild(
                 caseId
             );
@@ -3997,6 +5238,7 @@ function renderCaseLibrary() {
                 topRow
             );
 
+
             const actions =
                 document.createElement(
                     "div"
@@ -4004,6 +5246,7 @@ function renderCaseLibrary() {
 
             actions.className =
                 "library-actions";
+
 
             const openButton =
                 document.createElement(
@@ -4028,6 +5271,7 @@ function renderCaseLibrary() {
                 }
             );
 
+
             const deleteButton =
                 document.createElement(
                     "button"
@@ -4051,6 +5295,7 @@ function renderCaseLibrary() {
                 }
             );
 
+
             actions.appendChild(
                 openButton
             );
@@ -4070,13 +5315,16 @@ function renderCaseLibrary() {
     );
 }
 
+
 function renderReady() {
+
 
     readyView.classList.remove(
 
         "hidden"
 
     );
+
 
     caseIdInput.value =
 
@@ -4085,6 +5333,7 @@ function renderReady() {
         ||
 
         "";
+
 
     experimentTypeInput.value =
 
@@ -4096,11 +5345,14 @@ function renderReady() {
 
         "LC_multi";
 
+
     renderCaseLibrary();
 
 }
 
+
 function renderRunning() {
+
 
     runningView.classList.remove(
 
@@ -4108,9 +5360,11 @@ function renderRunning() {
 
     );
 
+
     runningCaseId.textContent =
 
         caseState.case_id;
+
 
     eventCount.textContent =
 
@@ -4134,9 +5388,12 @@ function renderRunning() {
 
         );
 
+
     renderEventButtons();
 
+
     renderLastRecorded();
+
 
     renderTimeline(
 
@@ -4145,6 +5402,7 @@ function renderRunning() {
         false
 
     );
+
 
     renderCalibration(
 
@@ -4156,9 +5414,11 @@ function renderRunning() {
 
     );
 
+
     undoButton.disabled =
 
         !hasActiveEvent();
+
 
     restoreButton.disabled =
 
@@ -4166,15 +5426,19 @@ function renderRunning() {
 
 }
 
+
 function renderEventButtons() {
+
 
     eventGrid.innerHTML =
 
         "";
 
+
     const latestActive =
 
         getLatestActiveEvent();
+
 
     const latestName =
 
@@ -4188,9 +5452,11 @@ function renderEventButtons() {
 
             null;
 
+
     caseState.event_types.forEach(
 
         eventName => {
+
 
             const button =
 
@@ -4200,17 +5466,21 @@ function renderEventButtons() {
 
                 );
 
+
             button.type =
 
                 "button";
+
 
             button.className =
 
                 "event-button";
 
+
             button.textContent =
 
                 eventName;
+
 
             if (
 
@@ -4222,6 +5492,7 @@ function renderEventButtons() {
 
             ) {
 
+
                 button.classList.add(
 
                     "selected"
@@ -4230,11 +5501,13 @@ function renderEventButtons() {
 
             }
 
+
             button.addEventListener(
 
                 "click",
 
                 () => {
+
 
                     recordEvent(
 
@@ -4245,6 +5518,7 @@ function renderEventButtons() {
                 }
 
             );
+
 
             eventGrid.appendChild(
 
@@ -4258,13 +5532,17 @@ function renderEventButtons() {
 
 }
 
+
 function renderLastRecorded() {
+
 
     const event =
 
         getLatestActiveEvent();
 
+
     if (!event) {
+
 
         lastRecorded.classList.add(
 
@@ -4272,9 +5550,11 @@ function renderLastRecorded() {
 
         );
 
+
         return;
 
     }
+
 
     lastRecorded.classList.remove(
 
@@ -4282,9 +5562,11 @@ function renderLastRecorded() {
 
     );
 
+
     lastEventName.textContent =
 
         event.event;
+
 
     lastEventElapsed.textContent =
 
@@ -4300,6 +5582,7 @@ function renderLastRecorded() {
 
 }
 
+
 function renderTimeline(
 
     target,
@@ -4308,9 +5591,11 @@ function renderTimeline(
 
 ) {
 
+
     target.innerHTML =
 
         "";
+
 
     if (
 
@@ -4322,6 +5607,7 @@ function renderTimeline(
 
     ) {
 
+
         const empty =
 
             document.createElement(
@@ -4330,13 +5616,16 @@ function renderTimeline(
 
             );
 
+
         empty.className =
 
             "timeline-empty";
 
+
         empty.textContent =
 
             "No events recorded yet.";
+
 
         target.appendChild(
 
@@ -4344,9 +5633,11 @@ function renderTimeline(
 
         );
 
+
         return;
 
     }
+
 
     caseState.events.forEach(
 
@@ -4358,6 +5649,7 @@ function renderTimeline(
 
         ) => {
 
+
             const item =
 
                 document.createElement(
@@ -4366,9 +5658,11 @@ function renderTimeline(
 
                 );
 
+
             item.className =
 
                 "timeline-item";
+
 
             if (
 
@@ -4380,6 +5674,7 @@ function renderTimeline(
 
             ) {
 
+
                 item.classList.add(
 
                     "removed"
@@ -4387,6 +5682,7 @@ function renderTimeline(
                 );
 
             }
+
 
             const mainRow =
 
@@ -4396,9 +5692,11 @@ function renderTimeline(
 
                 );
 
+
             mainRow.className =
 
                 "timeline-main-row";
+
 
             const left =
 
@@ -4408,9 +5706,11 @@ function renderTimeline(
 
                 );
 
+
             left.className =
 
                 "timeline-main";
+
 
             const nameRow =
 
@@ -4420,9 +5720,11 @@ function renderTimeline(
 
                 );
 
+
             nameRow.className =
 
                 "timeline-name-row";
+
 
             const name =
 
@@ -4432,9 +5734,11 @@ function renderTimeline(
 
                 );
 
+
             name.className =
 
                 "timeline-name";
+
 
             name.textContent =
 
@@ -4454,11 +5758,13 @@ function renderTimeline(
 
                 event.event;
 
+
             nameRow.appendChild(
 
                 name
 
             );
+
 
             if (
 
@@ -4470,6 +5776,7 @@ function renderTimeline(
 
             ) {
 
+
                 const chip =
 
                     document.createElement(
@@ -4478,13 +5785,16 @@ function renderTimeline(
 
                     );
 
+
                 chip.className =
 
                     "status-chip";
 
+
                 chip.textContent =
 
                     "REMOVED";
+
 
                 nameRow.appendChild(
 
@@ -4494,11 +5804,13 @@ function renderTimeline(
 
             }
 
+
             left.appendChild(
 
                 nameRow
 
             );
+
 
             if (
 
@@ -4510,6 +5822,7 @@ function renderTimeline(
 
             ) {
 
+
                 const original =
 
                     document.createElement(
@@ -4518,13 +5831,16 @@ function renderTimeline(
 
                     );
 
+
                 original.className =
 
                     "timeline-meta";
 
+
                 original.textContent =
 
                     `Original: ${event.event_original}`;
+
 
                 left.appendChild(
 
@@ -4534,6 +5850,7 @@ function renderTimeline(
 
             }
 
+
             const meta =
 
                 document.createElement(
@@ -4542,9 +5859,11 @@ function renderTimeline(
 
                 );
 
+
             meta.className =
 
                 "timeline-meta";
+
 
             const referenceText =
 
@@ -4554,6 +5873,7 @@ function renderTimeline(
 
                 )}`;
 
+
             const eegDatetime =
 
                 getEegDatetime(
@@ -4562,7 +5882,9 @@ function renderTimeline(
 
                 );
 
+
             if (eegDatetime) {
+
 
                 meta.textContent =
 
@@ -4576,7 +5898,9 @@ function renderTimeline(
 
                     )}`;
 
+
             } else {
+
 
                 meta.textContent =
 
@@ -4584,13 +5908,16 @@ function renderTimeline(
 
             }
 
+
             left.appendChild(
 
                 meta
 
             );
 
+
             if (event.note) {
+
 
                 const note =
 
@@ -4600,13 +5927,16 @@ function renderTimeline(
 
                     );
 
+
                 note.className =
 
                     "timeline-meta";
 
+
                 note.textContent =
 
                     `Note: ${event.note}`;
+
 
                 left.appendChild(
 
@@ -4615,6 +5945,7 @@ function renderTimeline(
                 );
 
             }
+
 
             if (
 
@@ -4626,6 +5957,7 @@ function renderTimeline(
 
             ) {
 
+
                 const correction =
 
                     document.createElement(
@@ -4634,13 +5966,16 @@ function renderTimeline(
 
                     );
 
+
                 correction.className =
 
                     "timeline-meta";
 
+
                 correction.textContent =
 
                     `Corrections: ${event.correction_count}`;
+
 
                 left.appendChild(
 
@@ -4650,6 +5985,7 @@ function renderTimeline(
 
             }
 
+
             const time =
 
                 document.createElement(
@@ -4658,9 +5994,11 @@ function renderTimeline(
 
                 );
 
+
             time.className =
 
                 "timeline-time";
+
 
             time.textContent =
 
@@ -4674,11 +6012,13 @@ function renderTimeline(
 
                 );
 
+
             mainRow.appendChild(
 
                 left
 
             );
+
 
             mainRow.appendChild(
 
@@ -4686,17 +6026,20 @@ function renderTimeline(
 
             );
 
+
             item.appendChild(
 
                 mainRow
 
             );
 
+
             if (
 
                 allowCorrections
 
             ) {
+
 
                 const actions =
 
@@ -4706,9 +6049,11 @@ function renderTimeline(
 
                     );
 
+
                 actions.className =
 
                     "timeline-actions";
+
 
                 const renameButton =
 
@@ -4718,23 +6063,28 @@ function renderTimeline(
 
                     );
 
+
                 renameButton.type =
 
                     "button";
+
 
                 renameButton.className =
 
                     "mini-button";
 
+
                 renameButton.textContent =
 
                     "Rename";
+
 
                 renameButton.addEventListener(
 
                     "click",
 
                     () => {
+
 
                         renameEventAtIndex(
 
@@ -4746,6 +6096,7 @@ function renderTimeline(
 
                 );
 
+
                 const statusButton =
 
                     document.createElement(
@@ -4754,13 +6105,16 @@ function renderTimeline(
 
                     );
 
+
                 statusButton.type =
 
                     "button";
 
+
                 statusButton.className =
 
                     "mini-button";
+
 
                 statusButton.textContent =
 
@@ -4778,11 +6132,13 @@ function renderTimeline(
 
                         "Remove";
 
+
                 statusButton.addEventListener(
 
                     "click",
 
                     () => {
+
 
                         toggleEventStatusAtIndex(
 
@@ -4794,17 +6150,20 @@ function renderTimeline(
 
                 );
 
+
                 actions.appendChild(
 
                     renameButton
 
                 );
 
+
                 actions.appendChild(
 
                     statusButton
 
                 );
+
 
                 item.appendChild(
 
@@ -4813,6 +6172,7 @@ function renderTimeline(
                 );
 
             }
+
 
             target.appendChild(
 
@@ -4826,7 +6186,9 @@ function renderTimeline(
 
 }
 
+
 function renderComplete() {
+
 
     completeView.classList.remove(
 
@@ -4834,9 +6196,11 @@ function renderComplete() {
 
     );
 
+
     completeCaseId.textContent =
 
         caseState.case_id;
+
 
     const activeCount =
 
@@ -4852,6 +6216,7 @@ function renderComplete() {
 
         ).length;
 
+
     const removedCount =
 
         caseState.events.length
@@ -4859,6 +6224,7 @@ function renderComplete() {
         -
 
         activeCount;
+
 
     completeSummary.textContent =
 
@@ -4898,6 +6264,7 @@ function renderComplete() {
 
         );
 
+
     renderCalibration(
 
         completeReferenceTime,
@@ -4908,6 +6275,7 @@ function renderComplete() {
 
     );
 
+
     renderTimeline(
 
         completeTimeline,
@@ -4915,6 +6283,7 @@ function renderComplete() {
         true
 
     );
+
 
     if (
         caseState.library_id
@@ -4932,6 +6301,7 @@ function renderComplete() {
         librarySaveStatus.textContent =
             "Not saved to Case Library.";
     }
+
 
     newCaseButton.textContent =
         caseState.library_id
@@ -4953,11 +6323,14 @@ function renderComplete() {
     }
 
 }
+
+
 /* =========================================================
 
    EVENT LISTENERS
 
    ========================================================= */
+
 
 startButton.addEventListener(
 
@@ -4967,6 +6340,7 @@ startButton.addEventListener(
 
 );
 
+
 endButton.addEventListener(
 
     "click",
@@ -4974,6 +6348,7 @@ endButton.addEventListener(
     endExperiment
 
 );
+
 
 newCaseButton.addEventListener(
 
@@ -4988,6 +6363,7 @@ resumeRecordingButton.addEventListener(
     resumeExperiment
 );
 
+
 saveLibraryButton.addEventListener(
 
     "click",
@@ -4995,6 +6371,7 @@ saveLibraryButton.addEventListener(
     archiveCurrentCase
 
 );
+
 
 exportCsvButton.addEventListener(
 
@@ -5004,6 +6381,23 @@ exportCsvButton.addEventListener(
 
 );
 
+
+if (exportAllCsvButton) {
+    exportAllCsvButton.addEventListener(
+        "click",
+        exportAllLibraryCsv
+    );
+}
+
+
+if (backupLibraryButton) {
+    backupLibraryButton.addEventListener(
+        "click",
+        exportLibraryBackup
+    );
+}
+
+
 undoButton.addEventListener(
 
     "click",
@@ -5011,6 +6405,7 @@ undoButton.addEventListener(
     undoLastEvent
 
 );
+
 
 restoreButton.addEventListener(
 
@@ -5020,6 +6415,7 @@ restoreButton.addEventListener(
 
 );
 
+
 runningApplyCalibration
 
     .addEventListener(
@@ -5027,6 +6423,7 @@ runningApplyCalibration
         "click",
 
         () => {
+
 
             applyCalibration(
 
@@ -5040,6 +6437,7 @@ runningApplyCalibration
 
     );
 
+
 runningClearCalibration
 
     .addEventListener(
@@ -5050,6 +6448,7 @@ runningClearCalibration
 
     );
 
+
 completeApplyCalibration
 
     .addEventListener(
@@ -5057,6 +6456,7 @@ completeApplyCalibration
         "click",
 
         () => {
+
 
             applyCalibration(
 
@@ -5070,6 +6470,7 @@ completeApplyCalibration
 
     );
 
+
 completeClearCalibration
 
     .addEventListener(
@@ -5080,21 +6481,27 @@ completeClearCalibration
 
     );
 
+
 /* =========================================================
 
    INITIALIZE
 
    ========================================================= */
 
+
 async function initializeApplication() {
 
+
     try {
+
 
         const stored =
 
             await loadPersistentCase();
 
+
         await refreshLibraryRecords();
+
 
         caseState =
 
@@ -5112,11 +6519,15 @@ async function initializeApplication() {
 
                 createInitialState();
 
+
         initializeRuntimeTimer();
+
 
         render();
 
+
     } catch (error) {
+
 
         console.error(
 
@@ -5126,22 +6537,27 @@ async function initializeApplication() {
 
         );
 
+
         /*
 
         Fail safely into a usable empty state.
 
         */
 
+
         caseState =
 
             createInitialState();
 
+
         initializeRuntimeTimer();
+
 
         render();
 
     }
 
 }
+
 
 initializeApplication();

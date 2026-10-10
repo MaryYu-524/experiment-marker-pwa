@@ -214,8 +214,7 @@ input:focus {
 .secondary-button {
     margin-top: 18px;
 
-    border:
-        1px solid
+    border: 1px solid
         var(--border);
 
     background:
@@ -1129,4 +1128,18 @@ input:focus {
     border-top:
         1px solid
         var(--border);
+}
+
+
+#libraryBackupStatus {
+    text-align: center;
+    margin: 12px 0 0;
+    padding: 0 8px 12px;
+}
+
+#backupLibraryButton,
+#exportAllCsvButton {
+    display: block;
+    width: calc(100% - 38px);
+    margin-inline: auto;
 }
